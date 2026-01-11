@@ -114,3 +114,59 @@ li button {
   text-align: center;
   color: var(--rose);
 }
+
+
+/* NAVBAR STYLING */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 50px;
+  background-color: rgba(255, 255, 255, 0.05); /* Transparan sesuai container */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 20px;
+}
+
+.nav-logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--rose); /* Warna Rose dari tema asli */
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-item {
+  color: var(--white);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav-item:hover {
+  color: var(--skyblue);
+}
+
+.nav-user {
+  color: var(--skyblue);
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+.nav-logout-btn {
+  background-color: transparent;
+  color: var(--rose);
+  border: 1px solid var(--rose);
+  padding: 5px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: auto; /* Overwrite width 100% dari style.css asli */
+  margin-top: 0;
+}
+
+.nav-logout-btn:hover {
+  background-color: var(--rose);
+  color: var(--bluegray);
+}
