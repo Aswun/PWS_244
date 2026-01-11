@@ -6,7 +6,10 @@ const customerController = require("../controllers/customer.controller");
 router.get("/api-products", auth, customerController.getProducts);
 router.post("/api-keys", auth, customerController.generateKey);
 router.get("/api-keys", auth, customerController.getKeys);
+
+// Rute Baru untuk Transaksi & Pembayaran
 router.post("/buy-product", auth, customerController.buyProduct);
+router.post("/pay-product", auth, customerController.payProduct);
 router.get("/transactions", auth, customerController.getTransactions);
 
 module.exports = router;
