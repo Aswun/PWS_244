@@ -1,0 +1,116 @@
+:root {
+  --bluegray: #4d5b6f;
+  --skyblue: #a3c1cd;
+  --rose: #e5c3bd;
+  --white: #ffffff;
+}
+
+/* RESET */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: var(--bluegray);
+  color: var(--skyblue);
+}
+
+/* CARD / CONTAINER */
+.container {
+  width: 400px;
+  margin: 80px auto;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 24px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* TITLE */
+h2 {
+  color: var(--white);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* INPUT */
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  background-color: #3f4b5c;
+  color: var(--white);
+}
+
+input::placeholder {
+  color: var(--skyblue);
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  background-color: var(--rose);
+  color: var(--bluegray);
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* TEXT */
+p {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.bold {
+  color: var(--white);
+  font-weight: bold;
+}
+
+/* LIST */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  background: rgba(255,255,255,0.06);
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+  color: var(--white);
+}
+
+/* SMALL BUTTON */
+li button {
+  background: transparent;
+  color: var(--rose);
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+/* LOGO */
+.logo {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--rose);
+  margin-bottom: 10px;
+}
+
+/* LOADING */
+.loading {
+  text-align: center;
+  color: var(--rose);
+}
