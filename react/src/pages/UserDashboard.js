@@ -4,95 +4,96 @@ import axios from 'axios';
 export default function UserDashboard() {
   const [products, setProducts] = useState([]);
   const [keys, setKeys] = useState([]);
+  const [purchasedIds, setPurchasedIds] = useState([]); 
   const [selectedProduct, setSelectedProduct] = useState('');
   const token = localStorage.getItem("token");
   const API_URL = "http://localhost:3007/api/customer";
 
-  // Fungsi untuk memuat data dari server
   const fetchData = async () => {
     try {
-      // Mengambil daftar produk yang tersedia
-      const resProducts = await axios.get(`${API_URL}/api-products`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setProducts(resProducts.data);
+      const headers = { Authorization: `Bearer ${token}` };
+      const [resP, resK, resT] = await Promise.all([
+        axios.get(`${API_URL}/api-products`, { headers }),
+        axios.get(`${API_URL}/api-keys`, { headers }),
+        axios.get(`${API_URL}/transactions`, { headers })
+      ]);
 
-      // Set default selected product jika data tersedia
-      if (resProducts.data.length > 0) {
-        setSelectedProduct(resProducts.data[0].id);
+      setProducts(resP.data);
+      setKeys(resK.data);
+      setPurchasedIds(resT.data.map(t => t.api_product_id));
+
+      if (resP.data.length > 0 && !selectedProduct) {
+        setSelectedProduct(resP.data[0].id.toString());
       }
-
-      // Mengambil daftar API Key milik user
-      const resKeys = await axios.get(`${API_URL}/api-keys`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setKeys(resKeys.data);
     } catch (err) {
-      console.error("Error fetching data:", err);
+      console.error("Gagal memuat data", err);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [token]);
+  useEffect(() => { fetchData(); }, [token]);
 
-  // Fungsi untuk generate API Key baru
-  const generateKey = async () => {
-    // Validasi: Jika produk belum dipilih atau daftar produk kosong
-    if (!selectedProduct) {
-      alert("Silakan pilih produk terlebih dahulu sebelum melakukan generate API!");
-      return;
+  const handleBuy = async () => {
+    try {
+      await axios.post(`${API_URL}/buy-product`, 
+        { api_product_id: selectedProduct },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert("Pembelian Berhasil!");
+      fetchData(); 
+    } catch (err) {
+      alert("Gagal membeli produk.");
     }
+  };
 
+  const handleGenerate = async () => {
     try {
       const res = await axios.post(`${API_URL}/api-keys`, 
         { api_product_id: selectedProduct },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
-      alert("Berhasil! API Key baru Anda: " + res.data.apiKey);
-      
-      // Refresh daftar kunci agar API key yang baru dibuat langsung muncul
-      fetchData(); 
+      alert("API Key Berhasil Dibuat: " + res.data.apiKey);
+      fetchData();
     } catch (err) {
-      alert("Gagal melakukan generate API Key.");
+      alert(err.response?.data?.message || "Gagal generate key.");
     }
   };
+
+  const isOwned = purchasedIds.includes(parseInt(selectedProduct));
+  const currentProduct = products.find(p => parseInt(p.id) === parseInt(selectedProduct));
 
   return (
     <div className="container">
       <div className="logo">USER DASHBOARD</div>
       
-      <h2>Generate API Key</h2>
-      
-      {/* Tampilan Kondisional jika produk kosong */}
-      {products.length === 0 ? (
-        <p className="bold" style={{ color: 'var(--rose)' }}>
-          Belum ada produk tersedia. Anda belum bisa membuat API Key.
-        </p>
-      ) : (
-        <>
-          <select 
-            value={selectedProduct} 
-            onChange={e => setSelectedProduct(e.target.value)}
-          >
-            {products.map(p => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
-          </select>
-          <button onClick={generateKey}>Generate</button>
-        </>
-      )}
+      <h2>Pilih API Produk</h2>
+      <select value={selectedProduct} onChange={e => setSelectedProduct(e.target.value)}>
+        {products.map(p => (
+          <option key={p.id} value={p.id}>{p.name} - Rp {p.price}</option>
+        ))}
+      </select>
+
+      <div style={{ marginTop: '20px' }}>
+        {isOwned ? (
+          // PASTIKAN onClick di bawah ini memiliki 'handleGenerate', tidak kosong atau hanya komentar
+          <button onClick={handleGenerate} style={{ backgroundColor: 'var(--skyblue)', color: 'var(--bluegray)' }}>
+            Generate API Key
+          </button>
+        ) : (
+          <button onClick={handleBuy}>
+            Beli API ({currentProduct ? `Rp ${currentProduct.price}` : 'Pilih Produk'})
+          </button>
+        )}
+      </div>
 
       <h2>My API Keys</h2>
-      {/* List untuk melihat API Keys yang telah dibuat */}
       <ul>
         {keys.length === 0 ? (
-          <li style={{ textAlign: 'center', opacity: 0.6 }}>Anda belum memiliki API Key.</li>
+          <li>Belum ada API Key.</li>
         ) : (
-          keys.map((k, index) => (
-            <li key={index} style={{ wordBreak: 'break-all' }}>
-              <strong>Key:</strong> {k.api_key}
+          keys.map((k, i) => (
+            <li key={i}>
+              <strong>{products.find(p => p.id === k.api_product_id)?.name}:</strong> 
+              <br/>{k.api_key}
             </li>
           ))
         )}
